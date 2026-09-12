@@ -1,0 +1,87 @@
+{
+  "_instructions": "本文件是行业接入四件套之一。域 ID 一经分配不复用。填完跑平台侧校验器自测。",
+  "profile_version": "domain/1.0",
+  "domain_id": "ene",
+  "domain_name": "能源 · 电力业务许可与并网",
+  "operator": {
+    "org": "待认领 — 本域开放给具备资质的运营方",
+    "contact": "见 README 的「认领方式」",
+    "agent_card": "https://SynomosAI.github.io/.well-known/agent-card.json"
+  },
+  "attributes": [
+    {
+      "key": "ene.power_business_license",
+      "type": "enum",
+      "values": [
+        "licensed",
+        "exempt",
+        "unlicensed",
+        "pending"
+      ],
+      "issuer_required": true,
+      "ttl_days": 365,
+      "assurance_min": "verified",
+      "visibility_default": "private"
+    },
+    {
+      "key": "ene.grid_connection_status",
+      "type": "enum",
+      "values": [
+        "connected",
+        "approved_not_connected",
+        "pending",
+        "rejected",
+        "not_applicable"
+      ],
+      "issuer_required": true,
+      "ttl_days": 180,
+      "assurance_min": "verified",
+      "visibility_default": "private"
+    },
+    {
+      "key": "ene.dispatch_relationship",
+      "type": "enum",
+      "values": [
+        "dispatched",
+        "not_dispatched",
+        "unknown"
+      ],
+      "issuer_required": true,
+      "ttl_days": 180,
+      "assurance_min": "verified",
+      "visibility_default": "private"
+    },
+    {
+      "key": "ene.carbon_accounting_method",
+      "type": "string",
+      "issuer_required": false,
+      "ttl_days": 365,
+      "assurance_min": "self-declared",
+      "visibility_default": "private"
+    },
+    {
+      "key": "ene.protection_zone",
+      "type": "enum",
+      "values": [
+        "within",
+        "outside",
+        "unknown",
+        "not_applicable"
+      ],
+      "issuer_required": false,
+      "ttl_days": 365,
+      "assurance_min": "self-declared",
+      "visibility_default": "private"
+    }
+  ],
+  "checker_endpoint": "mcp://pending-claim/ene-checker",
+  "gate_map_ref": "./gate-map.json",
+  "privacy_ref": "./privacy.json",
+  "red_lines": [
+    "接入条件与核算口径须以电网企业与主管部门文件为准，AI 不得自行认定",
+    "不得输出可并网、可送电或可开展供电业务的放行类表述，以电网企业书面意见为准",
+    "不得给出碳配额或减排量的核算认定结论，核算须由具备资质的机构完成"
+  ],
+  "valid_from": "2026-09-12",
+  "status": "RESERVED"
+}
