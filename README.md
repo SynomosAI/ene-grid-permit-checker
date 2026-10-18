@@ -1,17 +1,65 @@
 # ene-grid-permit-checker
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Domain Profile](https://img.shields.io/badge/domain-ene%20%7C%20domain%2F1.0-blue.svg)](domain.manifest.json)
+[![Status: RESERVED](https://img.shields.io/badge/status-RESERVED%20%7C%20open%20claim-orange.svg)](domain.manifest.json)
+[![Gate: five-level](https://img.shields.io/badge/gate-silent%2Fwarn%2Fconfirm%2Fblock%2Frequire--owner-8a2be2.svg)](gate-map.json)
+[![Privacy: default-off](https://img.shields.io/badge/privacy-default--off-brightgreen.svg)](privacy.json)
+
 > **状态：RESERVED（占位 · 开放认领）** — 本仓已按平台协议规范建好行业接入四件套骨架，
 > 等待具备本域资质的运营方认领并填充真实规则。
 
 把「这个电源能不能并网、按什么口径算碳」拆成可核验的属性，让 AI 只做提示，不下接入结论。
 
-## 这个域管什么
+**关键词 / Keywords**：电力业务许可 · 并网接入 · 碳核算 · 电力设施保护区 · domain profile · compliance checker · regulatory verification · grid connection · carbon accounting · MCP tool · attribute verification · gate map · privacy by default-off
+
+---
+
+## 这个域管什么 / What this domain covers
 
 电力业务许可、并网接入与碳核算口径核验
 
 电力业务许可、并网调度关系、碳核算方法，每一项都有法定口径且地区差异大。AI 能做的是把该走哪条路、缺哪个件摆清楚，并网与核定价权在电网企业与主管部门。
 
-## 域标识
+This domain is the **energy / power business-licence & grid-connection** profile of a multi-domain verification platform. It turns "may this site connect to the grid, and under which carbon-accounting method" into verifiable attributes; the AI only surfaces what route to take and which evidence is missing — grid connection and pricing decisions stay with the grid operator and the regulator.
+
+---
+
+## 快速开始 / Quick Start
+
+> 本仓是**域声明骨架**（行业接入四件套 JSON），不是可运行的应用程序。克隆后用标准 JSON 工具即可校验结构。
+
+```bash
+# 1. 克隆本仓 / clone this repo
+git clone https://github.com/SynomosAI/ene-grid-permit-checker.git
+cd ene-grid-permit-checker
+
+# 2. 校验四件套结构是否为合法 JSON（任意一个报错即骨架不完整）
+python -m json.tool domain.manifest.json > /dev/null
+python -m json.tool gate-map.json        > /dev/null
+python -m json.tool privacy.json         > /dev/null
+python -m json.tool checker.io.json      > /dev/null
+
+# 3. 查看本域名称与红线 / print domain name and red lines
+python -c "import json;m=json.load(open('domain.manifest.json',encoding='utf-8'));print(m['domain_name']);[print('-',r) for r in m['red_lines']]"
+```
+
+核验器（MCP 工具）的输入输出契约见 `checker.io.json`。一个最小调用示例：
+
+```json
+{
+  "subject_ref": "mpp:cn:9f2c1a7b",
+  "attribute_keys": ["ene.power_business_license", "ene.grid_connection_status"],
+  "evidence": ["tsa:2026-09-12#sha256:3b1f..."],
+  "request_id": "req-20260912-0001"
+}
+```
+
+> 核验器只有「出示与核验」一个动作，**没有「判定」选项**——`合格/不合格`、`已合规/监管已认可`、`建议批准/建议驳回`等结论性输出均在 `checker.io.json` 的 `_forbidden_outputs` 黑名单中。
+
+---
+
+## 域标识 / Domain identity
 
 | 项 | 值 |
 |---|---|
@@ -21,7 +69,7 @@
 | 当前状态 | `RESERVED` |
 | 占位时间 | 2026-09-12 |
 
-## 属性清单
+## 属性清单 / Attributes
 
 | 属性键 | 类型 | 说明 |
 |---|---|---|
@@ -31,7 +79,7 @@
 | `ene.carbon_accounting_method` | string | 碳核算方法与报告口径（标准号 + 边界说明） |
 | `ene.protection_zone` | enum | 是否位于电力设施保护区内 · 取值 within/outside/unknown/not_applicable |
 
-## 本域红线（不可逾越，机器可读）
+## 本域红线（不可逾越，机器可读）/ Red lines
 
 1. 接入条件与核算口径须以电网企业与主管部门文件为准，AI 不得自行认定
 2. 不得输出可并网、可送电或可开展供电业务的放行类表述，以电网企业书面意见为准
@@ -40,16 +88,34 @@
 > 红线在 `gate-map.json` 中均有对应阻断规则。平台校验器会检查「每条红线都有规则覆盖」，
 > 缺失即校验失败——**制度与系统不允许不同步**。
 
-## 行业接入四件套
+## 行业接入四件套 / The four-piece access set
 
 | 文件 | 作用 |
 |---|---|
 | `domain.manifest.json` | 本域声明：属性清单、签发方要求、有效期、红线 |
 | `gate-map.json` | 本域「什么动作要多少摩擦」：silent / warn / confirm / block / require-owner |
 | `privacy.json` | 本域隐私声明：默认关闭、最小必要、可撤回、可删除 |
-| `checker` | 本域核验器（MCP 工具，**只出示核验，不下判定**） |
+| `checker.io.json` | 本域核验器（MCP 工具，**只出示核验，不下判定**） |
 
-## 核心原则
+## 仓库结构 / Repository layout
+
+```text
+ene-grid-permit-checker/
+├── README.md              # 本文件（中文为主，英文对照）
+├── README.en.md           # English README
+├── LICENSE                # MIT License（© 2026 SynomosAI）
+├── CODEOWNERS             # @SynomosAI/synomosai-gov
+├── domain.manifest.json  # 本域声明：属性清单 / 签发方 / 有效期 / 红线
+├── gate-map.json          # 本域摩擦分级：silent/warn/confirm/block/require-owner
+├── privacy.json           # 本域隐私声明：默认关闭 / 最小必要 / 可撤回 / 可删除
+├── checker.io.json         # 本域核验器（MCP 工具）IO 契约
+├── llms.txt               # 给 AI 的最小索引（llms.txt 标准）
+├── llms-full.txt          # 给 AI 的完整文本
+├── AGENTS.md              # 给 AI Agent 的工作指引
+└── SECURITY.md            # 安全策略与报告途径
+```
+
+## 核心原则 / Core principles
 
 **平台只当擂台，不当货架。** 本域的核验器只回答「这条声明是否可核验、缺什么要件」，
 不回答「这件事是否合规、该不该做」。判定权在本域的资质方、监管方与人。
@@ -57,7 +123,7 @@
 **隐私是准入条件，不是整改事项。** 缺失 `privacy.json` 或任一必填字段不符，
 符合性校验直接失败——不是警告，是拒绝接入。
 
-## 参考依据
+## 参考依据 / References
 
 - 中华人民共和国电力法
 - 电力业务许可证管理规定
@@ -66,7 +132,7 @@
 
 > 上列依据仅用于说明本域属性的来源与口径，不构成法律意见。具体适用以现行有效文本与主管部门解释为准。
 
-## 认领方式
+## 认领方式 / How to claim
 
 本域面向具备相应资质的机构开放。认领后请：
 
@@ -74,6 +140,8 @@
 2. 按本域现行有效规则校准属性取值与红线表述
 3. 跑平台侧校验器自测（五项判据全过方可提交）
 4. 提 PR，附资质证明与规则依据
+
+---
 
 ## 许可与署名
 
